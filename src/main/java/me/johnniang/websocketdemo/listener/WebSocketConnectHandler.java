@@ -39,12 +39,18 @@ public class WebSocketConnectHandler<S> implements ApplicationListener<SessionCo
         Principal user = SimpMessageHeaderAccessor.getUser(headers);
         log.info("Got user: [{}]", user);
 
-        Thread notificationSender = new Thread(new NotificationSender());
+        Thread notificationSender = new Thread(new NotificationSender(connectedEvent.getUser()));
         notificationSender.setName("notification-sender");
         notificationSender.start();
     }
 
     public class NotificationSender implements Runnable {
+
+        private final Principal user;
+
+        public NotificationSender(Principal user) {
+            this.user = user;
+        }
 
         @Override
         public void run() {
@@ -59,13 +65,15 @@ public class WebSocketConnectHandler<S> implements ApplicationListener<SessionCo
                     orderData.setCreateTime(LocalDateTime.now());
                     orderData.setSenderAddress("重庆市沙坪垻");
                     orderData.setReceiverAddress("成都市成华区");
+                    orderData.setUserId(user.getName());
 
                     Message<Message.NewOrderData> newOrderDataMessage = new Message<>(UUID.randomUUID().toString(), MessageType.NEW_ORDER, orderData);
-                    log.debug("Trying to send a new order data message: [{}]", newOrderDataMessage);
+                    log.debug("Trying to send a new order data message: [{}] for user: [{}]", newOrderDataMessage, user);
 
-                    messagingTemplate.convertAndSend("/topic/notification", newOrderDataMessage);
+//                    messagingTemplate.convertAndSend("/topic/notification", newOrderDataMessage);
+                    messagingTemplate.convertAndSendToUser(user.getName(), "/queue/notice", newOrderDataMessage);
 
-                    TimeUnit.SECONDS.sleep(10 + random.nextInt(5));
+                    TimeUnit.SECONDS.sleep(1 + random.nextInt(5));
                 }
             } catch (InterruptedException e) {
                 log.error("Interrupted!", e);

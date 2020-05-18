@@ -74,6 +74,8 @@ public class Message<T> {
 
         private OrderType type;
 
+        private String userId;
+
         private LocalDateTime createTime;
 
         public String getOrderNumber() {
@@ -112,6 +114,14 @@ public class Message<T> {
             return type;
         }
 
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
         public void setType(OrderType type) {
             this.type = type;
         }
@@ -126,12 +136,12 @@ public class Message<T> {
 
         @Override
         public String toString() {
-            return "NewOrderData{" +
-                "orderNumber='" + orderNumber + '\'' +
+            return "NewOrderData{" + "orderNumber='" + orderNumber + '\'' +
                 ", senderAddress='" + senderAddress + '\'' +
                 ", receiverAddress='" + receiverAddress + '\'' +
                 ", bizType=" + bizType +
                 ", type=" + type +
+                ", userId=" + userId +
                 ", createTime=" + createTime +
                 '}';
         }
