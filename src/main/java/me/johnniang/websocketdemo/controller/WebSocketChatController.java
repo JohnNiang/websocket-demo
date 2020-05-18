@@ -28,20 +28,8 @@ public class WebSocketChatController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @MessageMapping("/send")
-    public void sendMessage(@Payload WebSocketChatMessage message,
-//                            @Header("simpleSessionId") String sessionId,
-                            Principal user) {
-        WebSocketOutChatMessage outChatMessage = new WebSocketOutChatMessage();
-        outChatMessage.setFrom(message.getFrom());
-        outChatMessage.setContent(message.getContent());
-        outChatMessage.setTimestamp(LocalDateTime.now());
-
-        messagingTemplate.convertAndSendToUser(message.getTo(), "/users/queue/specific-user", outChatMessage);
-    }
-
     @MessageMapping("/message")
-    @SendToUser(value = "/queue/reply")
+    @SendToUser("/queue/notice")
     public String processMessageFromClient(@Payload String message, Principal user) {
         log.info("Got message: [{}] of user: [{}]", message, user);
 //        throw new RuntimeException("I made an exception.");
