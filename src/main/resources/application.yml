@@ -1,0 +1,15 @@
+server:
+  port: 9090
+spring:
+  output:
+    ansi:
+      enabled: always
+  rabbitmq:
+    host: 127.0.0.1
+    username: giant
+    password: opengiant
+    port: 5672
+    virtual-host: giant_vhost
+logging:
+  level:
+    me.johnniang.websocketdemo: debug
